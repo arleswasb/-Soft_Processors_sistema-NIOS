@@ -1,0 +1,93 @@
+#include "altera_avalon_pio_regs.h"
+#include "system.h"
+#include <stdio.h>
+#include <unistd.h> // Necessário para a função usleep()
+
+int main() {
+  // Variáveis de controlo do contador
+  int contador = 0;
+  int rodando = 0;             // 0 = Parado, 1 = Em contagem
+  int ultimo_estado_botao = 1; // KEYS operam em lógica invertida (1 = Solto)
+
+  // Tabela de conversão: Índices de 0 a 9 para Displays de 7 Segmentos (Cátodo
+  // Comum/Lógica Invertida) Bits: [g f e d c b a] -> '0' liga o segmento, '1'
+  // desliga
+  int tabela_7seg[] = {
+      0x40, // 0
+      0x79, // 1
+      0x24, // 2
+      0x30, // 3
+      0x19, // 4
+      0x12, // 5
+      0x02, // 6
+      0x78, // 7
+      0x00, // 8
+      0x10  // 9
+  };
+
+  printf("Sistema Contador 0-99 Inicializado com Sucesso!\n");
+
+  while (1) {
+    // ----------------------------------------------------------------
+    // 1. LEITURA DOS PERIFÉRICOS DE ENTRADA
+    // ----------------------------------------------------------------
+    int leitura_chaves = IORD_ALTERA_AVALON_PIO_DATA(CHAVES_BASE);
+    int leitura_botao = IORD_ALTERA_AVALON_PIO_DATA(BOTAO_START_STOP_BASE);
+
+    // Isolamento dos bits usando máscaras lógicas (Bitwise AND)
+    int chave_direcao = leitura_chaves & 0x01; // SW0 (Bit 0): 1 = UP, 0 = DOWN
+    int chave_reset =
+        (leitura_chaves & 0x02) >> 1; // SW1 (Bit 1): 1 = RESET ATIVO
+
+    // ----------------------------------------------------------------
+    // 2. PROCESSAMENTO DA LÓGICA (Prioridade para o Reset da SW1)
+    // ----------------------------------------------------------------
+    if (chave_reset == 1) {
+      contador = 0; // Força o contador a zero imediatamente
+    } else {
+      // Detecção de Borda de Descida no Botão Start/Stop (Passagem de 1 para 0)
+      if (leitura_botao == 0 && ultimo_estado_botao == 1) {
+        rodando = !rodando; // Inverte o estado de execução (Play/Pause)
+        usleep(50000); // Filtro Debounce por software (50ms) para evitar mau
+                       // contacto
+      }
+      ultimo_estado_botao = leitura_botao; // Atualiza o histórico do botão
+
+      // Se o sistema estiver em modo "Start", atualiza o valor do contador
+      if (rodando) {
+        if (chave_direcao == 1) {
+          contador++;
+          if (contador > 99)
+            contador = 0; // Loop crescente
+        } else {
+          contador--;
+          if (contador < 0)
+            contador = 99; // Loop decrescente
+        }
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // 3. ATUALIZAÇÃO DAS SAÍDAS FLUSH (LEDs e Displays)
+    // ----------------------------------------------------------------
+    // Escreve o valor decimal puro diretamente nos 10 LEDs em formato Binário
+    IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, contador);
+
+    // Separação matemática dos dígitos
+    int dezena = contador / 10;
+    int unidade = contador % 10;
+
+    // Junta as duas codificações de 7 bits num único barramento de 14 bits
+    // (HEX1 & HEX0) Desloca as dezenas para os 7 bits superiores e soma com as
+    // unidades nos 7 bits inferiores
+    int dado_final_displays = (tabela_7seg[dezena] << 7) | tabela_7seg[unidade];
+
+    // Envia o bloco de bits para o periférico PIO do display
+    IOWR_ALTERA_AVALON_PIO_DATA(DISPLAY_7SEG_BASE, dado_final_displays);
+
+    // Define a velocidade da contagem (Delay de 500ms = 0.5 segundos por passo)
+    usleep(500000);
+  }
+
+  return 0;
+}
