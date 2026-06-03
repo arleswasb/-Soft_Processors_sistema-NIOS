@@ -1,0 +1,35 @@
+# === Arquivos Temporários e Compilação do Quartus ===
+incremental_db/
+db/
+simulation/
+greybox_tmp/
+hc_output/
+.qsys_edit/
+hps_isw_software/
+output_files/
+amd_device_table.dat
+
+# Extensões pesadas geradas no processo
+*.bak
+*.orig
+*.rpt
+*.summary
+*.bdf
+*.dpf
+*.smsg
+*.jdi
+*.pin
+*.done
+*.qws
+
+# === Arquivos Temporários do Qsys (Gerados na síntese) ===
+# Mantemos o arquivo .qsys principal, mas ignoramos as pastas de submódulos VHDL gerados
+*/synthesis/submodules/
+*/synthesis/pjt_nios_ii.vhd
+*/synthesis/*.vhd
+*sopcinfo
+
+# === Arquivos Temporários do Eclipse (Nios II Software) ===
+software/*/obj/
+software/*/Makefile
+software/*_bsp/
