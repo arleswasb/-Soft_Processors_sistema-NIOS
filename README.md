@@ -109,7 +109,7 @@ Para solucionar isso sem adicionar componentes de hardware (filtros RC), foi imp
 ##  Como Executar o Projeto
 
 1. **Hardware:** Abra o projeto no Quartus II, abra o *Programmer* e descarregue o arquivo compilado `Projeto_01.sof` na FPGA via cabo USB-Blaster.
-1.a **Atenção** Tambem podemos utilizar o arquivo Projeto_01.qar para abrir o projeto em outro computador.
-2. **Software:** Abra o *Nios II Software Build Tools for Eclipse*, importe a pasta do projeto contina em `software/contador_0_99`, gere o pacote BSP (*Generate BSP*) e execute o projeto utilizando a opção *Run As -> Nios II Hardware*.
+2. **Atenção** Tambem podemos utilizar o arquivo Projeto_01.qar para abrir o projeto em outro computador.
+3. **Software:** Abra o *Nios II Software Build Tools for Eclipse*, importe a pasta do projeto contina em `software/contador_0_99`, gere o pacote BSP (*Generate BSP*) e execute o projeto utilizando a opção *Run As -> Nios II Hardware*.
 
 ```
