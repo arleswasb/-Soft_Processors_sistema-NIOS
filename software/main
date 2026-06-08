@@ -46,12 +46,12 @@ int main() {
       contador = 0; // Força o contador a zero imediatamente
     } else {
       // Detecção de Borda de Descida no Botão Start/Stop (Passagem de 1 para 0)
-      if (leitura_botao == 0 && ultimo_estado_botao == 1) {
-        rodando = !rodando; // Inverte o estado de execução (Play/Pause)
-        usleep(50000); // Filtro Debounce por software (50ms) para evitar mau
-                       // contacto
+      if (leitura_botao == 1) {
+        rodando = 1; 
       }
-      ultimo_estado_botao = leitura_botao; // Atualiza o histórico do botão
+      else if (leitura_botao == 0){
+        rodando = 0;
+      }
 
       // Se o sistema estiver em modo "Start", atualiza o valor do contador
       if (rodando) {
