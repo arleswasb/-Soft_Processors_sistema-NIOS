@@ -36,23 +36,23 @@ Para que o processador Nios II consiga se comunicar com o mundo físico, os sina
 | --- | --- | --- | --- | --- |
 | `CLOCK_50` | **PIN_N2** | Oscilador de 50 MHz | Entrada | Clock global do sistema |
 | `KEY[0]` | **PIN_G26** | Botão de Pressão KEY0 | Entrada | Reset de Hardware (Reinicia o Nios II) |
-| `BOTAO_START_STOP` | **PIN_N23** | Botão de Pressão KEY1 | Entrada | Controle de Fluxo (Play / Pause) |
 | `CHAVES[0]` | **PIN_N25** | Chave Seletora SW0 | Entrada | Controle de Direção (1 = UP, 0 = DOWN) |
 | `CHAVES[1]` | **PIN_N26** | Chave Seletora SW1 | Entrada | Reset de Software (Zera o Contador) |
-| `DISPLAY_7SEG[0]` | **PIN_AF10** | Display HEX0 - Segmento A | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[1]` | **PIN_AB12** | Display HEX0 - Segmento B | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[2]` | **PIN_AC12** | Display HEX0 - Segmento C | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[3]` | **PIN_AD11** | Display HEX0 - Segmento D | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[4]` | **PIN_AE11** | Display HEX0 - Segmento E | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[5]` | **PIN_V14** | Display HEX0 - Segmento F | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[6]` | **PIN_V13** | Display HEX0 - Segmento G | Saída | Unidade do Contador |
-| `DISPLAY_7SEG[7]` | **PIN_V20** | Display HEX1 - Segmento A | Saída | Dezena do Contador |
-| `DISPLAY_7SEG[8]` | **PIN_V21** | Display HEX1 - Segmento B | Saída | Dezena do Contador |
-| `DISPLAY_7SEG[9]` | **PIN_W21** | Display HEX1 - Segmento C | Saída | Dezena do Contador |
-| `DISPLAY_7SEG[10]` | **PIN_Y22** | Display HEX1 - Segmento D | Saída | Dezena do Contador |
-| `DISPLAY_7SEG[11]` | **PIN_AA24** | Display HEX1 - Segmento E | Saída | Dezena do Contador |
-| `DISPLAY_7SEG[12]` | **PIN_AA23** | Display HEX1 - Segmento F | Saída | Dezena do Contador |
-| `DISPLAY_7SEG[13]` | **PIN_AB24** | Display HEX1 - Segmento G | Saída | Dezena do Contador |
+| `CHAVES[2]` | **PIN_P25** | Chave Seletora SW2  | Entrada | Controle do contador (start / stop) |
+| `DISPLAY_7SEG[0]` | **PIN_R2** | Display HEX6 - Segmento A | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[1]` | **PIN_P4** | Display HEX6 - Segmento B | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[2]` | **PIN_P3** | Display HEX6 - Segmento C | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[3]` | **PIN_M2** | Display HEX6 - Segmento D | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[4]` | **PIN_M3** | Display HEX6 - Segmento E | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[5]` | **PIN_M5** | Display HEX6 - Segmento F | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[6]` | **PIN_M4** | Display HEX6 - Segmento G | Saída | Unidade do Contador |
+| `DISPLAY_7SEG[7]` | **PIN_L3** | Display HEX7 - Segmento A | Saída | Dezena do Contador |
+| `DISPLAY_7SEG[8]` | **PIN_L2** | Display HEX7 - Segmento B | Saída | Dezena do Contador |
+| `DISPLAY_7SEG[9]` | **PIN_L9** | Display HEX7 - Segmento C | Saída | Dezena do Contador |
+| `DISPLAY_7SEG[10]` | **PIN_L6** | Display HEX7 - Segmento D | Saída | Dezena do Contador |
+| `DISPLAY_7SEG[11]` | **PIN_L7** | Display HEX7 - Segmento E | Saída | Dezena do Contador |
+| `DISPLAY_7SEG[12]` | **PIN_P9** | Display HEX7 - Segmento F | Saída | Dezena do Contador |
+| `DISPLAY_7SEG[13]` | **PIN_N9** | Display HEX7 - Segmento G | Saída | Dezena do Contador |
 | `LEDS[0..9]` | *PIN_AE23 a PIN_Y18* | Bloco de 10 LEDs Vermelhos | Saída | Exibição em código binário direto |
 
 ---
@@ -63,7 +63,7 @@ Para que o processador Nios II consiga se comunicar com o mundo físico, os sina
 * **Inversão de Sentido Dinâmica:** Controlado pela chave seletora `SW[0]` (1 = Contagem Crescente / Up, 0 = Contagem Decrescente / Down).
 * **Reset Lógico de Alta Prioridade:** Controlado pela chave seletora `SW[1]`. Quando ativada, força o contador síncronamente para `00` e bloqueia novas contagens, mantendo o processador em execução.
 * **Saída Binária Paralela:** O valor atual do contador é convertido e exibido em formato binário direto nos 10 `LEDS` vermelhos da placa.
-* **Controle de Execução (Start/Stop):** O botão de pressão `KEY[1]` alterna o estado do contador entre "Rodando" (Play) e "Pausado" (Pause).
+* **Controle de Execução (Start/Stop):** Controlado pela chave seletora `SW[2]` alterna o estado do contador entre "Rodando" (Play) e "Pausado" (Pause).
 
 ---
 
@@ -74,35 +74,13 @@ O processador Nios II foi configurado com os seguintes submódulos no Qsys:
 * **Nios II/e:** Processador soft-core em sua versão econômica.
 * **On-Chip Memory:** 20.000 bytes de memória RAM/ROM interna da FPGA.
 * **JTAG UART:** Interface de comunicação para depuração e terminal.
-* **PIO Chaves (Input - 2 bits):** Mapeado para monitorar as chaves `SW[0]` e `SW[1]`.
-* **PIO Botão (Input - 1 bit):** Mapeado para monitorar o botão `KEY[1]`.
+* **PIO Chaves (Input - 2 bits):** Mapeado para monitorar as chaves `SW[0]`, `SW[1]` e `SW[3]`.
+* **PIO Botão (Input - 1 bit):** Mapeado para monitorar o botão `KEY[O]`.
 * **PIO LEDs (Output - 10 bits):** Barramento conectado aos LEDs vermelhos para exibição binária.
 * **PIO Displays (Output - 14 bits):** Barramento unificado que controla os displays `HEX0` (bits 0 a 6) e `HEX1` (bits 7 a 13).
 
 ---
 
-## Detalhes de Implementação do Software (C)
-
-O código desenvolvido em C resolve dois problemas clássicos de engenharia de sistemas embarcados na manipulação do botão `KEY[1]`:
-
-### 1. Controle de Fluxo por Detecção de Borda
-
-Para que o usuário não precise ficar segurando o botão para o contador funcionar, o programa utiliza a **Detecção de Borda de Descida**.
-Os botões da placa operam em **Lógica Invertida**:
-
-* Botão Solto = Nível Lógico `1` (Alto)
-* Botão Pressionado = Nível Lógico `0` (Baixo)
-
-Em cada iteração do laço principal, o Nios II compara o estado atual do botão com o seu estado imediatamente anterior (`ultimo_estado_botao`). O comando de inversão de fluxo (`rodando = !rodando`) só é executado no exato instante em que o sinal elétrico passa de `1` para `0` (transição de descida). Isso permite o comportamento estável de clique para Play / clique para Pause.
-
-### 2. Filtro Debounce por Software
-
-Botões mecânicos possuem elasticidade e, ao serem pressionados, suas lâminas metálicas internas vibram microscopicamente por alguns milissegundos antes de firmar o contato elétrico. Para um processador rápido, essa vibração gera falsos múltiplos cliques em uma fração de segundo.
-
-Para solucionar isso sem adicionar componentes de hardware (filtros RC), foi implementado um **Filtro Debounce por Software**:
-
-* Assim que uma borda de descida válida é detectada, a função `usleep(50000);` suspende a execução do processador por **50 milissegundos**.
-* Esse tempo é imperceptível para o usuário, mas é suficiente para que as vibrações mecânicas cessem e o sinal elétrico se estabilize, garantindo que cada clique físico resulte em apenas uma única ação no sistema.
 
 ---
 
