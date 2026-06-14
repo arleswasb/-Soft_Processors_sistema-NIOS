@@ -36,8 +36,8 @@ int main() {
 
     // Isolamento dos bits usando máscaras lógicas (Bitwise AND)
     int chave_direcao = leitura_chaves & 0x01; // SW0 (Bit 0): 1 = UP, 0 = DOWN
-    int chave_reset =
-        (leitura_chaves & 0x02) >> 1; // SW1 (Bit 1): 1 = RESET ATIVO
+    int chave_reset = (leitura_chaves & 0x02) >> 1; // SW1 (Bit 1): 1 = RESET ATIVO
+    int chave_start_stop = (leitura_chaves & 0x04) >> 2; // SW2 (Bit 2): 1 = CONTADOR ATIVO, 0 = CONTADOR PARADO
 
     // ----------------------------------------------------------------
     // 2. PROCESSAMENTO DA LÓGICA (Prioridade para o Reset da SW1)
@@ -46,10 +46,10 @@ int main() {
       contador = 0; // Força o contador a zero imediatamente
     } else {
       // Detecção de Borda de Descida no Botão Start/Stop (Passagem de 1 para 0)
-      if (leitura_botao == 1) {
+      if (chave_start_stop == 1) {
         rodando = 1; 
       }
-      else if (leitura_botao == 0){
+      else if (chave_start_stop == 0){
         rodando = 0;
       }
 
